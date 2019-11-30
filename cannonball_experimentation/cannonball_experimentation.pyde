@@ -13,27 +13,34 @@ class Cannonball:
         
         self.__radius = radius
         
-        self.__left_x = center_x - self.__radius
-        self.__right_x = center_x + self.__radius
+        self.__left_x = self.__center_x - self.__radius
+        self.__right_x = self.__center_x + self.__radius
         
-        self.__up_y = center_y - self.__radius
-        self.__down_y = center_y + self.__radius
+        self.__up_y = self.__center_y - self.__radius
+        self.__down_y = self.__center_y + self.__radius
         
         self.__vy = -3
         self.__vx = 05
     
     def movement(self):
-        
+
         if self.__down_y >= 800 or self.__up_y <= 0:
             
             self.__vy = -1 * self.__vy
             
         if self.__left_x <= 0 or self.__right_x >= 1000:
             
-            self.vx = -1 * self.__vx
+            self.__vx = -1 * self.__vx
             
         self.__center_x = self.__center_x + self.__vx
         self.__center_y = self.__center_y + self.__vy
+        
+        self.__left_x = self.__center_x - self.__radius
+        self.__right_x = self.__center_x + self.__radius
+        
+        self.__up_y = self.__center_y - self.__radius
+        self.__down_y = self.__center_y + self.__radius
+        
                     
     def display(self):
         
