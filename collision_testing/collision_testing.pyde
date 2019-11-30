@@ -1,122 +1,113 @@
-import math, os, random
+cx = 0
+cy = 0
+r = 30
 
-PATH = os.getcwd()
+sx = 200
+sy = 100
+sw = 200   
+sh = 200
 
-class Cannonball:
-    
-    def __init__(self, center_x, center_y, radius):
-        
-        self.__img = loadImage(PATH  + "/Images/Cannonball.png")
-        
-        self.__center_x = center_x
-        self.__center_y = center_y
-        
-        self.__radius = radius
-        
-        self.__left_x = self.__center_x - self.__radius
-        self.__right_x = self.__center_x + self.__radius
-        
-        self.__up_y = self.__center_y - self.__radius
-        self.__down_y = self.__center_y + self.__radius
-        
-        self.__vy = -3
-        self.__vx = 05
-        
-        self.__block_list = []
-        
-        block_1 = Block(255, 0, 0, 750, 600, 150, 100)
-        block_2 = Block(0, 0, 255, 250, 200, 150, 100)
-        
-        self.__block_list.append(block_1)
-        self.__block_list.append(block_2)
-    
-    def movement(self):
-        
-        for block in self.__block_list:
-            
-            # if (block.y1 <= self.__down_y <= block.y1 + self.__vy and block.x1 <= self.__center_x <= block.x2) or (block.y2 - self.__vy <= self.__up_y <= block.y2 and block.x1 <= self.__center_x <= block.x2):
-                
-            #     self.__vy = -1 * self.__vy
-                
-            #     break
-            
-            # if (block.x2 - self.__vx <= self.__left_x <= block.x2 and block.y1 <= self.__center_y <= block.y2) or (block.x1 <= self.__right_x <= block.x1 + self.__vx and block.y1 <= self.__center_y <= block.y2):
-            
-            #     self.__vx = -1 * self.__vx
-                
-            #     break
-            
-            if (((block.y1) ** 2 - (self.__center_y) ** 2) ** 0.5 < self.__radius and block.x1 <= self.__center_x <= block.x2) or (((block.y2) ** 2 - (self.__center_y) ** 2) ** 0.5 < self.__radius and block.x1 <= self.__center_x <= block.x2):
-                  
-                  self.__vy = -1 * self.__vy
-                  break
-              
-            if (((block.x1) ** 2 - (self.__center_x) ** 2) ** 0.5 < self.__radius and block.y1 <= self.__center_y <= block.y2) or (((block.x2) ** 2 - (self.__center_x) ** 2) ** 0.5 < self.__radius and block.y1 <= self.__center_y <= block.y2):
-                  
-                  self.__vx = -1 * self.__vx
-                  break
-            
-        if self.__down_y >= 800 or self.__up_y <= 0:
-            
-            self.__vy = -1 * self.__vy
-            
-        if self.__left_x <= 0 or self.__right_x >= 1000:
-            
-            self.__vx = -1 * self.__vx
-            
-        self.__center_x = self.__center_x + self.__vx
-        self.__center_y = self.__center_y + self.__vy
-        
-        self.__left_x = self.__center_x - self.__radius
-        self.__right_x = self.__center_x + self.__radius
-        
-        self.__up_y = self.__center_y - self.__radius
-        self.__down_y = self.__center_y + self.__radius
-        
-                    
-    def display(self):
-        
-        self.movement()
-        
-        image(self.__img, self.__center_x - self.__radius, self.__center_y - self.__radius, self.__radius * 2, self.__radius * 2)
-        
-        for block in self.__block_list:
-            
-            block.display()
-
-class Block():
-    
-    def __init__(self, r, g, b, x, y, w, h):
-        
-        self.r = r
-        self.g = g
-        self.b = b
-        
-        self.x = x
-        self.y = y
-                
-        self.w = w
-        self.h = h
-        
-        self.x1 = self.x
-        self.x2 = self.x + self.w
-        
-        self.y1 = self.y
-        self.y2 = self.y + self.h
-    
-    def display(self):
-        
-        fill(self.r, self.g, self.b)
-        stroke(self.r, self.g, self.b)
-        rect(self.x, self.y, self.w, self.h)
-
-player_cannonball = Cannonball(500, 400, 50)
+flags = {"Top": False, "Bottom" : False, "Right" : False, "Left" : False}
 
 def setup():
-    size(1000, 800)
-    background(255)
+    
+    size(600,400)
+    noStroke()
 
 def draw():
 
     background(255)
-    player_cannonball.display()
+    
+    cx = mouseX
+    cy = mouseY
+    hit = circleRect(cx,cy,r, sx,sy,sw,sh)
+    
+    if (hit):
+      
+        if flags["Top"] and flags["Left"]:
+            
+            fill(0,0,124)
+            
+        elif flags["Top"] and flags["Right"]:
+            
+            fill(0,0,255)
+            
+        elif flags["Bottom"] and flags["Left"]:
+            
+            fill(111,111,111)
+            
+        elif flags["Bottom"] and flags["Right"]:
+            
+            fill(0,124,255)
+      
+        elif flags["Top"]:
+            
+            fill(124, 0, 0)
+            
+        elif flags["Bottom"]:
+            
+            fill(225, 0, 0)
+
+        elif flags["Left"]:
+            
+            fill(0, 124, 0)
+            
+        elif flags["Right"]:
+            
+            fill(0, 225, 0)
+        
+
+  
+    else:
+        
+        fill(0,150,255)
+    rect(sx,sy, sw,sh)
+
+    fill(0, 150)
+    ellipse(cx,cy, r*2,r*2)
+
+
+def circleRect(cx, cy, radius, rx, ry, rw, rh):
+    
+    global flags
+
+    testX = cx
+    testY = cy
+    
+    if (cx < rx):
+        testX = rx      
+    elif (cx > rx+rw):
+        testX = rx+rw   
+    if (cy < ry):
+        testY = ry      
+    elif (cy > ry+rh):
+        testY = ry+rh
+
+    distX = cx-testX
+    distY = cy-testY
+    distance = sqrt( (distX*distX) + (distY*distY) )
+
+    if (distance <= radius):
+        
+        if testX == rx:
+            
+            flags["Left"] = True
+            
+        if testX == rx + rw:
+            
+            flags["Right"] = True
+            
+        if testY == ry:
+            
+            flags["Top"] = True
+            
+        if testY == ry + rh:
+            
+            flags["Bottom"] = True
+        
+        return True
+    
+    flags = {"Top": False, "Bottom" : False, "Right" : False, "Left" : False}
+
+    
+    return False
