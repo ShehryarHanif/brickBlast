@@ -70,9 +70,9 @@ class CannonBall:
         print(degrees(self.__vectorDirection))
         #vectorDirection = math.pi / 2.0 - vectorDirection
         print(degrees(self.__vectorDirection))
-        self.__xCenter = float(self.__baseX) + float(self.__cannonHeight) * math.cos(self.__vectorDirection) - 2.0 * float(self.__radius) * cannonBallCount * cos(self.__vectorDirection)
-        self.__yCenter = float(self.__baseY) - float(self.__cannonHeight) * math.sin(self.__vectorDirection) + 2.0 * float(self.__radius) * cannonBallCount * sin(self.__vectorDirection)
-        self.__velocity = 2
+        self.__xCenter = float(self.__baseX) + float(self.__cannonHeight) * math.cos(self.__vectorDirection) - 2.0 * (float(self.__radius) + 5) * cannonBallCount * cos(self.__vectorDirection)
+        self.__yCenter = float(self.__baseY) - float(self.__cannonHeight) * math.sin(self.__vectorDirection) + 2.0 * (float(self.__radius) + 5)* cannonBallCount * sin(self.__vectorDirection)
+        self.__velocity = 5
         self.__xVelocity = self.__velocity * math.cos(self.__vectorDirection)
         self.__yVelocity = -self.__velocity * math.sin(self.__vectorDirection)
         self.__toDisplay = True
@@ -118,6 +118,8 @@ class Game:
 
 def setup():
     size(WIDTH, HEIGHT)
+    frameRate(120)
+    smooth()
     background(255)
     
 x, y = WIDTH / 2, HEIGHT
