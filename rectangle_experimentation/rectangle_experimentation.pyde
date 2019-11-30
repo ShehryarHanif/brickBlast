@@ -3,13 +3,14 @@ import math, os, random
 class Cannon:
     
     def __init__(self, base_x, base_y, cannon_width, cannon_height):
-        
         self.__base_x = base_x
         self.__base_y = base_y
         self.__width = cannon_width
         self.__height = cannon_height
+        self.__baseImage = loadImage(
+        self.__cannonImage = loadImage(
     
-    def __specialDisplay(self):
+    def __cannonBarrelDisplay(self):
         fill(0)
         rect(- self.__width / 2, -self.__height, self.__width, self.__height)
         
@@ -48,5 +49,3 @@ def draw():
 def mouseClicked():
     
     player_cannon.rotation()
-    
-    
