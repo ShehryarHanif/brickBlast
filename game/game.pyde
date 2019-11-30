@@ -1,6 +1,7 @@
 import math, os, random
 
 PATH = os.getcwd()
+EPS = 1
 WIDTH, HEIGHT = 500, 700 #5:7 must be maintained
 print PATH
 
@@ -22,7 +23,7 @@ class Cannon:
         
         
     def rotation(self):
-        angle = math.degrees(math.atan2(abs(mouseY - (self.__base_y - (self.__height / 300.0 * 64.0))),(mouseX - self.__base_x)))
+        angle = self.__angleCalculator()
         line(self.__base_x, self.__base_y - (self.__height / 300.0 * 64.0), mouseX, mouseY)
         #print(angle)
         pushMatrix()
@@ -31,6 +32,16 @@ class Cannon:
         self.__specialCannonBarrelDisplay()
         popMatrix()
         self.__specialCannonBaseImage()
+        
+    def __angleCalculator(self):
+        return math.degrees(math.atan2(abs(mouseY - (self.__base_y - (self.__height / 300.0 * 64.0))),(mouseX - self.__base_x)))
+    
+    def requisiteForCannonBall(self):
+        angle = radians(self.__angleCalculator())
+        return (angle, self.__base_x,self.__base_y - (self.__height / 300.0 * 64.0))
+    
+    def getCannonHeight(self):
+        return self.__height
 
 class Demarcator:
     def __init__(self):
@@ -46,63 +57,61 @@ class Demarcator:
         rectMode(CORNERS)
         rect(self.__topCorner[0], self.__topCorner[1], self.__bottomCorner[0], self.__bottomCorner[1])
 
-class Cannonball:
+class CannonBall:
     
-    def __init__(self, center_x, center_y, radius):
+    def __init__(self, usrCannon, cannonBallCount):
+        self.__img = loadImage(PATH  + "/Resources/CannonBall/Cannonball.png")
+        self.__radius = 8.0
+        self.__vectorDirection, self.__baseX, self.__baseY = usrCannon.requisiteForCannonBall()
+        self.__cannonHeight = usrCannon.getCannonHeight()
+        print "x", self.__baseX
+        print "y", self.__baseY
+        #vectorDirection = math.pi / 4.0
+        print(degrees(self.__vectorDirection))
+        #vectorDirection = math.pi / 2.0 - vectorDirection
+        print(degrees(self.__vectorDirection))
+        self.__xCenter = float(self.__baseX) + float(self.__cannonHeight) * math.cos(self.__vectorDirection) - 2.0 * float(self.__radius) * cannonBallCount * cos(self.__vectorDirection)
+        self.__yCenter = float(self.__baseY) - float(self.__cannonHeight) * math.sin(self.__vectorDirection) + 2.0 * float(self.__radius) * cannonBallCount * sin(self.__vectorDirection)
+        self.__velocity = 2
+        self.__xVelocity = self.__velocity * math.cos(self.__vectorDirection)
+        self.__yVelocity = -self.__velocity * math.sin(self.__vectorDirection)
+        self.__toDisplay = True
         
-        self.__img = loadImage(PATH  + "/Images/Cannonball.png")
-        
-        self.__center_x = center_x
-        self.__center_y = center_y
-        
-        self.__radius = radius
-        
-        self.__left_x = self.__center_x - self.__radius
-        self.__right_x = self.__center_x + self.__radius
-        
-        self.__up_y = self.__center_y - self.__radius
-        self.__down_y = self.__center_y + self.__radius
-        
-        self.__vy = -3
-        self.__vx = 05
-        
-        self.__block_list = []
-        
-        block_1 = Block(255, 0, 0, 750, 600, 150, 100)
-        block_2 = Block(0, 0, 255, 250, 200, 150, 100)
-        
-        self.__block_list.append(block_1)
-        self.__block_list.append(block_2)
     
-    def movement(self):
-            
-        if self.__down_y >= 800 or self.__up_y <= 0:
-            
-            self.__vy = -1 * self.__vy
-            
-        if self.__left_x <= 0 or self.__right_x >= 1000:
-            
-            self.__vx = -1 * self.__vx
-            
-        self.__center_x = self.__center_x + self.__vx
-        self.__center_y = self.__center_y + self.__vy
+    def updatePosition(self):
+        self.__xCenter += self.__xVelocity
+        self.__yCenter += self.__yVelocity
         
-        self.__left_x = self.__center_x - self.__radius
-        self.__right_x = self.__center_x + self.__radius
+    def display(self):
+        circle(int(self.__xCenter), int(self.__yCenter), self.__radius * 2)
         
-        self.__up_y = self.__center_y - self.__radius
-        self.__down_y = self.__center_y + self.__radius
+class CannonShot(list):
+    def __init__(self, usrCannon, cannonShootQuantity):
+        for ballCount in range(cannonShootQuantity):
+            self.append(CannonBall(usrCannon, ballCount))
+    
+    def updateAndDisplay(self):
+        for cBall in self:
+            cBall.updatePosition()
+            cBall.display()
+    
 
 class Game:
     def __init__(self):
         self.__playerCannon = Cannon(x, y, WIDTH / 10.0, WIDTH / 10.0 * 3)
+        self.__playerCannonShotQuanity = 15
+        self.__playerShot = CannonShot(self.__playerCannon, 0)
         self.__gameEndLine = Demarcator()
         
     def __updateAndDisplayCannon(self):
         self.__playerCannon.rotation()
+    
+    def shootCannon(self):
+        self.__playerShot = CannonShot(self.__playerCannon, self.__playerCannonShotQuanity)
         
     def display(self):
         self.__gameEndLine.display()
+        self.__playerShot.updateAndDisplay()
         self.__updateAndDisplayCannon()
     
 
@@ -117,4 +126,7 @@ brickBlast = Game()
 def draw():
     background(255)
     brickBlast.display()
+    
+def mouseClicked():
+    brickBlast.shootCannon()
   
