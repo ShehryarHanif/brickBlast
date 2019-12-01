@@ -1,4 +1,4 @@
-import math, os, random
+import math, os, time, random
 
 PATH = os.getcwd()
 EPS = 1
@@ -61,12 +61,13 @@ class CannonBall:
     
     def __init__(self, usrCannon, cannonBallCount):
         self.__img = loadImage(PATH  + "/Resources/CannonBall/Cannonball.png")
+        self.__separationDistance = 10
         self.__radius = 8.0
         self.__vectorDirection, self.__baseX, self.__baseY = usrCannon.requisiteForCannonBall()
         self.__cannonHeight = usrCannon.getCannonHeight()
-        self.__xCenter = float(self.__baseX) + float(self.__cannonHeight) * math.cos(self.__vectorDirection) - 2.0 * (float(self.__radius) + 5) * cannonBallCount * cos(self.__vectorDirection)
-        self.__yCenter = float(self.__baseY) - float(self.__cannonHeight) * math.sin(self.__vectorDirection) + 2.0 * (float(self.__radius) + 5)* cannonBallCount * sin(self.__vectorDirection)
-        self.__velocity = 1
+        self.__xCenter = float(self.__baseX) + float(self.__cannonHeight) * math.cos(self.__vectorDirection) - 2.0 * (float(self.__radius) + self.__separationDistance) * cannonBallCount * cos(self.__vectorDirection)
+        self.__yCenter = float(self.__baseY) - float(self.__cannonHeight) * math.sin(self.__vectorDirection) + 2.0 * (float(self.__radius) + self.__separationDistance)* cannonBallCount * sin(self.__vectorDirection)
+        self.__velocity = 3
         self.__xVelocity = self.__velocity * math.cos(self.__vectorDirection)
         self.__yVelocity = -self.__velocity * math.sin(self.__vectorDirection)
         
@@ -76,24 +77,48 @@ class CannonBall:
             closestPoint = [0, 0]
             horizontal, vertical = False, False
             
-            if self.__yCenter - self.__radius >= bottomY and leftX <= self.__xCenter <= rightX:
+            if self.__yCenter - self.__radius >= bottomY and leftX - 2.0 * self.__radius <= self.__xCenter <= rightX + 2.0 * self.__radius:
+                if self.__yCenter - self.__radius + self.__yVelocity <= bottomY:
+                    self.__xCenter += 2 * self.__xVelocity
+                    # print("hell")
+                    # newPositionCoordinates = [self.__xCenter + self.__xVelocity, self.__yCenter + self.__yVelocity]
+                    # closestPositionCoordinates = [self.__xCenter + float(self.__xVelocity) * float(self.__yCenter - bottomY - self.__radius) / float(self.__yVelocity), bottomY + self.__radius]
+                    
+                    # fill(0,255,0)
+                    # circle(closestPositionCoordinates[0],closestPositionCoordinates[1], 20)
+                    
+                    # self.__giveBoost(newPositionCoordinates, closestPositionCoordinates)
+                    
+                    # self.__yCenter =  bottomY + self.__radius
+                    # self.__yCenter += (abs(self.__yCenter + self.__yVelocity - bottomY)) - self.__radius
+                    
+                    # self.__xCenter += (self.__xVelocity * (self.__yCenter - bottomY - self.__radius) / self.__yVelocity)
+                    # self.__xCenter += self.__xVelocity * ((abs(self.__yCenter + self.__yVelocity - bottomY)) - self.__radius) / self.__yVelocity
+                    
                 vertical = True
                 closestPoint = [self.__xCenter, bottomY]
-            elif self.__yCenter + self.__radius <= topY and leftX <= self.__xCenter <= rightX:
+            elif self.__yCenter + self.__yVelocity + self.__radius <= topY and leftX - 2.0 * self.__radius <= self.__xCenter <= rightX + 2.0 * self.__radius:
+                if self.__yCenter + self.__radius + self.__yVelocity >= topY:
+                    self.__xCenter += 2 * self.__xVelocity
                 vertical = True
                 closestPoint = [self.__xCenter, topY]
                 
-            if self.__xCenter - self.__radius >= rightX and topY <= self.__yCenter <= bottomY:
+            if self.__xCenter - self.__radius + self.__xVelocity >= rightX and topY - 2.0 * self.__radius <= self.__yCenter <= bottomY + 2.0 * self.__radius:
+                if self.__xCenter - self.__radius + self.__xVelocity <= rightX:
+                    self.__yCenter -= 2 * self.__yVelocity
                 horizontal = True
                 closestPoint = [rightX, self.__yCenter]
-            elif self.__xCenter + self.__radius <= leftX and topY <= self.__yCenter <= bottomY:
+            elif self.__xCenter + self.__radius + self.__xVelocity <= leftX and topY  - 2.0 * self.__radius <= self.__yCenter <= bottomY + 2.0 * self.__radius:
+                if self.__xCenter + self.__radius + self.__xVelocity >= leftX:
+                    self.__yCenter -= 2 * self.__yVelocity
                 horizontal = True
                 closestPoint = [leftX, self.__yCenter]
-    
             
-            if math.sqrt((self.__xCenter - closestPoint[0]) ** 2 + (self.__yCenter - closestPoint[1]) ** 2) <= self.__radius + 1:
-                # # fill(0,255,255)
-                # # ellipse(closestPoint[0], closestPoint[1], 10, 10)
+            ellipse(closestPoint[0], closestPoint[1], 10, 10)
+            
+            if math.sqrt((self.__xCenter + self.__xVelocity - closestPoint[0]) ** 2 + (self.__yCenter + self.__yVelocity - closestPoint[1]) ** 2) <= self.__radius + 1:
+                fill(0,255,255)
+                ellipse(closestPoint[0], closestPoint[1], 10, 10)
                 # # print "HELLO"
                 # # if closestPoint[0] == leftX:
                 # #     self.__xCenter = leftX - self.__radius
@@ -116,6 +141,21 @@ class CannonBall:
                 if vertical:
                     self.__yVelocity *= -1.0
             
+    def __giveBoost(self, newPosition, closestPosition):
+        pendingMagnitudeChange = self.__getMagnitude(newPosition) - self.__getMagnitude(closestPosition)
+        
+        # print (pendingMagnitudeChange)
+        
+        theta = math.atan2(self.__yVelocity, self.__xVelocity)
+        
+        self.__xCenter = closestPosition[0] + float(pendingMagnitudeChange) * float(math.cos(theta))
+        
+        print(self.__xCenter)
+        
+        self.__yCenter = closestPosition[1] + float(pendingMagnitudeChange) * float(math.sin(theta))
+        
+    def __getMagnitude(self, position):
+        return math.sqrt((position[0] - self.__xCenter) ** 2 + ((position[1] - self.__yCenter) ** 2))
     
     def updatePosition(self):
         self.__xCenter += self.__xVelocity
@@ -131,8 +171,8 @@ class CannonShot(list):
     
     def updateAndDisplay(self, blockList):
         for cBall in self:
-            cBall.updatePosition()
             cBall.checkCollisions(blockList)
+            cBall.updatePosition()
             cBall.display()
     
 class tempBlock:
@@ -152,7 +192,7 @@ class tempBlock:
 class tempBlockList(list):
     
     def __init__(self):
-        self.append(tempBlock(100, 100, 100, 75))
+        self.append(tempBlock(100, 100, 400, 75))
         self.append(tempBlock(300, 300, 100, 75))
 
     def display(self):
@@ -162,7 +202,7 @@ class tempBlockList(list):
 class Game:
     def __init__(self):
         self.__playerCannon = Cannon(x, y, WIDTH / 10.0, WIDTH / 10.0 * 3)
-        self.__playerCannonShotQuanity = 20
+        self.__playerCannonShotQuanity = 10
         self.__playerShot = CannonShot(self.__playerCannon, 0)
         self.__gameEndLine = Demarcator()
         self.__blockList = tempBlockList()

@@ -109,7 +109,7 @@ class Game:
     def shootCannon(self):
         self.__playerShot = CannonShot(self.__playerCannon, self.__playerCannonShotQuanity)
         
-    def display(self):
+    def display(self):   
         self.__gameEndLine.display()
         self.__playerShot.updateAndDisplay()
         self.__updateAndDisplayCannon()
