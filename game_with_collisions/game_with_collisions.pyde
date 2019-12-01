@@ -56,7 +56,7 @@ class Demarcator:
         fill(self.__color)
         rectMode(CORNERS)
         rect(self.__topCorner[0], self.__topCorner[1], self.__bottomCorner[0], self.__bottomCorner[1])
-
+minVal = 1000000000000
 class CannonBall:
     
     def __init__(self, usrCannon, cannonBallCount):
@@ -66,31 +66,55 @@ class CannonBall:
         self.__cannonHeight = usrCannon.getCannonHeight()
         self.__xCenter = float(self.__baseX) + float(self.__cannonHeight) * math.cos(self.__vectorDirection) - 2.0 * (float(self.__radius) + 5) * cannonBallCount * cos(self.__vectorDirection)
         self.__yCenter = float(self.__baseY) - float(self.__cannonHeight) * math.sin(self.__vectorDirection) + 2.0 * (float(self.__radius) + 5)* cannonBallCount * sin(self.__vectorDirection)
-        self.__velocity = 5
+        self.__velocity = 1
         self.__xVelocity = self.__velocity * math.cos(self.__vectorDirection)
         self.__yVelocity = -self.__velocity * math.sin(self.__vectorDirection)
         
     def checkCollisions(self, blockList):
         for block in blockList:
             leftX, topY, rightX, bottomY = block.corners()
-            closestPoint = [-1, -1]
+            closestPoint = [0, 0]
+            horizontal, vertical = False, False
             
             if self.__yCenter - self.__radius >= bottomY and leftX <= self.__xCenter <= rightX:
+                vertical = True
                 closestPoint = [self.__xCenter, bottomY]
             elif self.__yCenter + self.__radius <= topY and leftX <= self.__xCenter <= rightX:
+                vertical = True
                 closestPoint = [self.__xCenter, topY]
                 
             if self.__xCenter - self.__radius >= rightX and topY <= self.__yCenter <= bottomY:
+                horizontal = True
                 closestPoint = [rightX, self.__yCenter]
             elif self.__xCenter + self.__radius <= leftX and topY <= self.__yCenter <= bottomY:
+                horizontal = True
                 closestPoint = [leftX, self.__yCenter]
+    
             
-            if math.sqrt((self.__xCenter - closestPoint[0]) ** 2 + (self.__yCenter - closestPoint[1])) <= self.__radius:
-                if closestPoint[0] == leftX or closestPoint[0] == rightX:
-                    self.__xVelocity *= -1
-                if closestPoint[1] == bottomY or closestPoint[1] == topY:
-                    self.__yVelocity *= -1 
-                
+            if math.sqrt((self.__xCenter - closestPoint[0]) ** 2 + (self.__yCenter - closestPoint[1]) ** 2) <= self.__radius + 1:
+                # # fill(0,255,255)
+                # # ellipse(closestPoint[0], closestPoint[1], 10, 10)
+                # # print "HELLO"
+                # # if closestPoint[0] == leftX:
+                # #     self.__xCenter = leftX - self.__radius
+                # #     self.__xVelocity *= -1
+                # # elif closestPoint[0] == rightX:
+                # #     self.__xCenter = rightX + self.__radius
+                # #     self.__xVelocity *= -1
+                # # print closestPoint[1], bottomY    
+                # # if closestPoint[1] == bottomY:
+                # #     print "HI"
+                    
+                # #     self.__yCenter = bottomY + self.__radius
+                # #     self.__yVelocity *= -1
+                # # elif closestPoint[1] == topY:
+                # #     self.__yCenter = topY - self.__radius
+                # #     self.__yVelocity *= -1
+                # print horizontal, vertical
+                if horizontal:
+                    self.__xVelocity *= -1.0
+                if vertical:
+                    self.__yVelocity *= -1.0
             
     
     def updatePosition(self):
@@ -108,14 +132,14 @@ class CannonShot(list):
     def updateAndDisplay(self, blockList):
         for cBall in self:
             cBall.updatePosition()
-            cBall.display()
             cBall.checkCollisions(blockList)
+            cBall.display()
     
 class tempBlock:
     
     def __init__(self, leftX, topY, bW, bH):
         self.__originPoint = [leftX, topY]
-        self.__terminalPoint = [leftX + bW, topY - bH]
+        self.__terminalPoint = [leftX + bW, topY + bH]
         
     def corners(self):
         return self.__originPoint[0], self.__originPoint[1], self.__terminalPoint[0], self.__terminalPoint[1]
@@ -128,8 +152,8 @@ class tempBlock:
 class tempBlockList(list):
     
     def __init__(self):
-        self.append(tempBlock(0, 100, 100, 75))
-        self.append(tempBlock(200, 300, 100, 75))
+        self.append(tempBlock(100, 100, 100, 75))
+        self.append(tempBlock(300, 300, 100, 75))
 
     def display(self):
         for block in self:
@@ -138,7 +162,7 @@ class tempBlockList(list):
 class Game:
     def __init__(self):
         self.__playerCannon = Cannon(x, y, WIDTH / 10.0, WIDTH / 10.0 * 3)
-        self.__playerCannonShotQuanity = 15
+        self.__playerCannonShotQuanity = 20
         self.__playerShot = CannonShot(self.__playerCannon, 0)
         self.__gameEndLine = Demarcator()
         self.__blockList = tempBlockList()
@@ -158,7 +182,7 @@ class Game:
 
 def setup():
     size(WIDTH, HEIGHT)
-    frameRate(120)
+    frameRate(60)
     smooth()
     background(255)
     
