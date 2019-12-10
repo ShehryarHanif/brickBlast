@@ -358,8 +358,8 @@ class BlockList(list):
         self.append(Block(WIDTH - 1, 0, 100, HEIGHT - WIDTH / 10.0 * 3 / 300.0 * 115)) # Right Boundary
         self.append(Block(0, -100, WIDTH, 101)) # Top Boundary
         
-        for c in range(5):
-            for r in range(10):
+        for c in range(2):
+            for r in range(3):
                 self.append(BrickBlock(c * 100, r * 50, 100, 50, 1))
                                                         
         self.__demarcationLineCollided = False
