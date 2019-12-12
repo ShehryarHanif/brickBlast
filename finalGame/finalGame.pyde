@@ -19,13 +19,12 @@ class Cannon:
         self.__cannonBarrelImg =  loadImage(PATH + "/Resources/Cannon/Cannon.png")
         self.__cannonBaseImg = loadImage(PATH + "/Resources/Cannon/CannonBase.png")
     
-    
     def __specialCannonBarrelDisplay(self):
         image(self.__cannonBarrelImg, - self.__width / 2, -self.__height, self.__width, self.__height)
         
     def __specialCannonBaseImage(self):
         image(self.__cannonBaseImg, self.__base_x - self.__width / 2, int(self.__base_y - self.__height / 300.0 * 115.0), self.__width, int(self.__height / 300.0 * 115.0))
-        
+
     def changePosition(self, newPosition):
         
         self.__base_x = newPosition[0]
@@ -97,13 +96,13 @@ class Score:
        
         rectMode(CORNER) 
         fill(87,65,47)
-        rect(WIDTH * 67.0 / 80.0, HEIGHT * 37.0 / 40.0, 70.0, 30.0)
+        rect(WIDTH * 60.0 / 80.0, HEIGHT * 151.0 / 160.0, 100.0, 30.0)
         
         fill(255)
         
         score_string = "SCORE:   " + str(self.__scoreAmount * 10) # This is the string we will show on the screen.
         
-        text(score_string, WIDTH * 136.0 / 160.0, HEIGHT * 77.0 / 80.0) # This will show the score on the screen.
+        text(score_string, WIDTH * 499.0 / 640.0, HEIGHT * 623.0 / 640.0) # This will show the score on the screen.
         
     def getScore(self):
         
@@ -198,7 +197,7 @@ class CannonBall:
                         else:
                             self.__collisionSound = player.loadFile(PATH + "/Resources/Sounds/alternateBallCollision.mp3")
                             self.__collisionSound.rewind()
-                            self.__collisionSound.setGain(-20)
+                            self.__collisionSound.setGain(-10)
                             self.__collisionSound.play()
     
                     if horizontal or corner:
@@ -231,21 +230,22 @@ class CannonShot(list):
     
     def updateAndDisplay(self, blockList, cannon, score):
         
+        aliveBalls = []
         tempList = self[:]
         
-        
-        for index, cBall in enumerate(tempList):
+        index = -1
+        for cBall in self:
             cBall.checkCollisions(blockList, score)
             cBall.updatePosition()
+            index += 1
             if cBall.lowerBoundaryCollision() or cBall.isBallDead():
                 if len(self) == 1:
                     cannon.changePosition(self[index].getCenterPosition())
                 if cBall.isAmmoCollision():
                     self.setIncrementStatus(True)
-                del self[index] 
-                
-                
-            cBall.display()
+                del self[index]
+                index -= 1
+            cBall.display()        
     
     def getIncrementStatus(self):
         return self.__increment
@@ -358,9 +358,10 @@ class BlockList(list):
         self.append(Block(WIDTH - 1, 0, 100, HEIGHT - WIDTH / 10.0 * 3 / 300.0 * 115)) # Right Boundary
         self.append(Block(0, -100, WIDTH, 101)) # Top Boundary
         
-        for c in range(2):
-            for r in range(3):
-                self.append(BrickBlock(c * 100, r * 50, 100, 50, 1))
+        self.append(BrickBlock(1 * 100, 2 * 50, 100, 50, 1))
+        self.append(BrickBlock(3 * 100, 4 * 50, 100, 50, 1))
+        self.append(BrickBlock(4 * 100, 8 * 50, 100, 50, 1))
+
                                                         
         self.__demarcationLineCollided = False
 
@@ -395,12 +396,13 @@ class BlockList(list):
         else:
             newBlockQuantity = 5
             
-            
         for newBlock in range(newBlockQuantity):
             
             newColPosition = availableColPositions.pop(random.randint(0, (len(availableColPositions) - 1)))
             
-            if random.randint(1,3) == 1:
+            ammoBlockChance = random.randint(1, 10)
+            
+            if ammoBlockChance == 1 or ammoBlockChance == 2 or ammoBlockChance == 3:
                 self.append(AmmoBlock(100 * newColPosition, 0, 100, 50))
                                                         
             else:
@@ -449,7 +451,7 @@ class Game:
         
         self.__background_sound = player.loadFile(PATH + "/Resources/Sounds/backgroundMusic.mp3")
         self.__background_sound.rewind()
-        self.__background_sound.setGain(-40)
+        self.__background_sound.setGain(-35)
         self.__background_sound.loop()
         
     def __updateAndDisplayCannon(self):
@@ -460,7 +462,7 @@ class Game:
 
         self.__cannonLaunch = player.loadFile(PATH + "/Resources/Sounds/cannonAlternateExplosion.mp3")
         self.__cannonLaunch.rewind()
-        self.__cannonLaunch.setGain(-30)
+        self.__cannonLaunch.setGain(-10)
         self.__cannonLaunch.play()
         
         self.__turnInPlay = True
@@ -503,14 +505,24 @@ class Game:
         length_string = "GAME OVER \nSCORE: " + str(self.__playerScore.getScore() * 10)  # This is the string to be shown on the screen.
         
         text(length_string, WIDTH / 4, HEIGHT / 2) # This shows the score on the screen.
-        self.__background_sound.close()
+        self.__background_sound.close()    
 
 
+def startingDisplay():
+    
+    fill(0, 0, 0)
+    textSize(20)
+            
+    menu_string = "BLOCK BLAST: \n 1. This is a derivative of \"Brick Blast\" from the\n mobile game \"My Talking Tom\". \n 2. he player has to skillfully aim a cannon at blocks of different durabilities (the quantity of cannonballs required to destroy each block) and destroy them.  "
+    
+    text(menu_string, WIDTH / 25, HEIGHT / 20) # This shows the score on the screen.    
+    time.sleep(20)
+    
 def setup():
     size(WIDTH, HEIGHT)
     frameRate(60)
-    smooth()
     background(255)
+    
     
 x, y = WIDTH / 2, HEIGHT
 brickBlast = Game()
