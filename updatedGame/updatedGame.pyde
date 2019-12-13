@@ -124,7 +124,7 @@ class Score: # We treat the score as an object with specific attributes and meth
         
         score_string = "SCORE:   " + str(self.__scoreAmount * 10) # We multiply the internally stored score by 10, so as to show bigger numbers on screen This, in theory, should be more motivating for the player.
         
-        text(score_string, WIDTH * 499.0 / 640.0, HEIGHT * 623.0 / 640.0)
+        text(score_string, WIDTH * 498.0 / 640.0, HEIGHT * 623.0 / 640.0)
         
     def getScore(self): # We will need to call the private attribute in various other objects' methods.
         
