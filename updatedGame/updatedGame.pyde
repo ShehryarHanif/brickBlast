@@ -699,7 +699,7 @@ def draw(): # This function is called sixty times a second.
     
     if not gameAllowed: # The title screen is displayed until the player chooses to start playing.
 
-        titleScreen =  loadImage(PATH + "/Resources/TitleScreen/titleScreen.jpg")
+        titleScreen =  loadImage(PATH + "/Resources/TitleScreen/startScreen.png")
         image(titleScreen, 0, 0, WIDTH, HEIGHT, 0,  0, 500, 700)
             
     elif brickBlast.getGameContinueStatus(): # The game keeps on going until the player loses.
@@ -716,7 +716,7 @@ def mouseClicked() :# The player fires cannonballs by clicking the mouse's butto
         
     global brickBlast, gameAllowed, startingSound # This allows us to reset the game.
         
-    if (not gameAllowed) and  (52 <= mouseX <= 447) and (561 <= mouseY <= 642): # The player has to click the "START" "button" to start the game.
+    if (not gameAllowed) and  (WIDTH / 500 * 210 <= mouseX <= WIDTH / 500 * (210  + 100)) and (HEIGHT / 700 * 510 <= mouseY <= HEIGHT / 700 * (510 + 200)): # The player has to click the "START" "button" to start the game.
     
         gameAllowed = True
 
