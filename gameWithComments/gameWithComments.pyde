@@ -608,7 +608,7 @@ class Game: # This combines all the different elements of the game together.
         
         score_string = "Ammo:   " + str(self.__playerCannonShotQuantity)
         
-        text(score_string, WIDTH * 60.0 / 640.0, HEIGHT * 623.0 / 640.0)
+        text(score_string, WIDTH * 58.0 / 640.0, HEIGHT * 623.0 / 640.0)
     
     def updateAndDisplay(self): # This is used to update the game's state and to display the game's various elements.
         
@@ -649,11 +649,18 @@ class Game: # This combines all the different elements of the game together.
         return self.__gameContinue
     
     def gameOverDisplay(self): # This method will be executed when the game ends, displaying the score.
+            
+        background(139,0,0)
         
-        fill(0, 0, 0)
+        noStroke()
+        
+        fill(0)
+        rect(0, HEIGHT * 5 / 14, WIDTH, 240) 
+             
+        fill(255, 255, 255)
         textSize(44)
                 
-        length_string = "GAME OVER\nSCORE: " + str(self.__playerScore.getScore() * 10)
+        length_string = "GAME OVER\n SCORE: " + str(self.__playerScore.getScore() * 10)
         
         text(length_string, WIDTH / 4, HEIGHT / 2)
         self.__background_sound.close()    
@@ -661,12 +668,12 @@ class Game: # This combines all the different elements of the game together.
 
 def startingDisplay(): # This function is executed at the beginning of the game, showing the player instruntions for the game.
     
-    fill(0, 0, 0)
+    fill(255)
     textSize(20)
             
     menu_string = "BLOCK BLAST: \n 1. This is a derivative of \"Brick Blast\" from the\n mobile game \"My Talking Tom\". \n 2. he player has to skillfully aim a cannon at blocks of different durabilities (the quantity of cannonballs required to destroy each block) and destroy them.  "
     
-    text(menu_string, WIDTH / 25, HEIGHT / 20) # This shows the score on the screen.    
+    text(menu_string, WIDTH * 2 / 50, HEIGHT / 20) # This shows the score on the screen.    
     time.sleep(20)
     
     
