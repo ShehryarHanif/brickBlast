@@ -165,46 +165,46 @@ class CannonBall: # Each cannonball will be treated as an instance of this class
             closestPoint = [0, 0] # We create a list of two elements, so as to later save the x-coordinate and y-coordinate of the block that is closest to the cannonball this method has been called for.
             horizontal, vertical, corner = False, False, False # The cannonball can either collides with the block's vertical sides or the block's horizontal sides or the block's corners.
             
-            if leftX - 20 <= self.__xCenter <= rightX + 20 and topY - 20 <= self.__yCenter <= bottomY + 20: # The below four checks will be only performed only if it is actually possible to collide with the horizontal or vertical walls of the block. The "corners" case will be handled separately.
+            # made redundant was creating errorsif True or leftX - 20 <= self.__xCenter <= rightX + 20 or topY - 20 <= self.__yCenter <= bottomY + 20: # The below four checks will be only performed only if it is actually possible to collide with the horizontal or vertical walls of the block. The "corners" case will be handled separately.
             
-                if self.__yCenter - self.__radius >= bottomY and leftX - math.floor(self.__velocity / self.__radius + 1) * self.__radius <= self.__xCenter <= rightX + math.floor(self.__velocity / self.__radius + 1) * self.__radius: # The is used to check for a collision with the bottom side of the block. 
-                    
-                    if self.__yCenter - self.__radius + self.__yVelocity <= bottomY:
-                        
-                        self.__xCenter += 2.0 * self.__xVelocity
-                        
-                    vertical = True
-                    closestPoint = [self.__xCenter, bottomY]
-                    
-                elif self.__yCenter + self.__radius <= topY and leftX - math.floor(self.__velocity / self.__radius + 1) * self.__radius <= self.__xCenter <= rightX + math.floor(self.__velocity / self.__radius + 1) * self.__radius: # This is used to check for a collision with the top side of the block. 
-                    
-                    if self.__yCenter + self.__radius + self.__yVelocity >= topY:
-                        
-                        self.__xCenter += 2.0 * self.__xVelocity
-                        
-                    vertical = True
-                    closestPoint = [self.__xCenter, topY]
-                    
-                if self.__xCenter - self.__radius >= rightX and topY - self.__radius <= self.__yCenter <= bottomY + self.__radius: # This is used to check for a collision with the right side of the block. 
-                    
-                    if self.__xCenter - self.__radius + self.__xVelocity <= rightX:
-                        
-                        self.__yCenter -= 2.0 * self.__yVelocity
-                        
-                    horizontal = True
-                    closestPoint = [rightX, self.__yCenter]
-                    
-                elif self.__xCenter + self.__radius <= leftX and topY  - self.__radius <= self.__yCenter <= bottomY + self.__radius: # This is used to check for a collision with the left side of the block.
-                    
-                    if self.__xCenter + self.__radius + self.__xVelocity >= leftX:
-                        
-                        self.__yCenter -= 2.0 * self.__yVelocity
-                        
-                    horizontal = True
-                    closestPoint = [leftX, self.__yCenter]
-                    
-            elif self.__xCenter <= leftX and self.__yCenter >= bottomY and self.__xCenter + self.__xVelocity >= leftX and self.__yCenter + self.__yVelocity <= bottomY: # This is used to check for a collision with the bottom-left corner of the block. 
+            if self.__yCenter - self.__radius >= bottomY and leftX - math.floor(self.__velocity / self.__radius + 1) * self.__radius <= self.__xCenter <= rightX + math.floor(self.__velocity / self.__radius + 1) * self.__radius: # The is used to check for a collision with the bottom side of the block. 
                 
+                if self.__yCenter - self.__radius + self.__yVelocity <= bottomY:
+                    
+                    self.__xCenter += 2.0 * self.__xVelocity
+                    
+                vertical = True
+                closestPoint = [self.__xCenter, bottomY]
+                
+            elif self.__yCenter + self.__radius <= topY and leftX - math.floor(self.__velocity / self.__radius + 1) * self.__radius <= self.__xCenter <= rightX + math.floor(self.__velocity / self.__radius + 1) * self.__radius: # This is used to check for a collision with the top side of the block. 
+                
+                if self.__yCenter + self.__radius + self.__yVelocity >= topY:
+                    
+                    self.__xCenter += 2.0 * self.__xVelocity
+                    
+                vertical = True
+                closestPoint = [self.__xCenter, topY]
+                
+            if self.__xCenter - self.__radius >= rightX and topY - self.__radius <= self.__yCenter <= bottomY + self.__radius: # This is used to check for a collision with the right side of the block. 
+                
+                if self.__xCenter - self.__radius + self.__xVelocity <= rightX:
+                    
+                    self.__yCenter -= 2.0 * self.__yVelocity
+                    
+                horizontal = True
+                closestPoint = [rightX, self.__yCenter]
+                
+            elif self.__xCenter + self.__radius <= leftX and topY  - self.__radius <= self.__yCenter <= bottomY + self.__radius: # This is used to check for a collision with the left side of the block.
+                
+                if self.__xCenter + self.__radius + self.__xVelocity >= leftX:
+                    
+                    self.__yCenter -= 2.0 * self.__yVelocity
+                    
+                horizontal = True
+                closestPoint = [leftX, self.__yCenter]
+                
+            if self.__xCenter <= leftX and self.__yCenter >= bottomY and self.__xCenter + self.__xVelocity >= leftX and self.__yCenter + self.__yVelocity <= bottomY: # This is used to check for a collision with the bottom-left corner of the block. 
+                print "HI"
                 corner = True
             
             elif self.__xCenter >= rightX and self.__yCenter >= bottomY and self.__xCenter + self.__xVelocity <= rightX and self.__yCenter + self.__yVelocity <= bottomY: # This is used to check for a collision with the bottom-right corner of the block. 
@@ -500,11 +500,11 @@ class BlockList(list): # This stores all the types of blocks.
             
             newBlockQuantity = 2
                                 
-        elif score <= 150:
+        elif score <= 350:
             
             newBlockQuantity = 3
                 
-        elif score <= 275:
+        elif score <= 575:
             
             newBlockQuantity = 4
             
@@ -693,7 +693,7 @@ brickBlast = Game() # This creates an instance of the "Game" class, wihch in tur
 gameAllowed = False # The game will not be played until the player chooses to start playing.
 
 
-titleScreen =  loadImage(PATH + "/Resources/TitleScreen/startScreen1.png") # We have two "Start Screens", of which one is used at the beginning.
+titleScreen =  loadImage(PATH + "/Resources/TitleScreen/startScreen" + str(random.randint(1,2)) + ".png") # We have two "Start Screens", of which one is used at the beginning.
 
 
 def draw(): # This function is called sixty times a second.
