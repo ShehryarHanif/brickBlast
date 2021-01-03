@@ -1,7 +1,7 @@
-# finalProject_IntroductionToComputerScience_AJC957-MMH690
-aqhra050 for Abdullah Javaid Chaudhry | ajc957
-
+# brickBlast
 ShehryarHanif for Malik Muhammad Shehryar Hanif | mmh690
+
+aqhra050 for Abdullah Javaid Chaudhry | ajc957
 
 This master branch contains our final game.
 
